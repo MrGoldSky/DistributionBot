@@ -28,3 +28,7 @@
 
 ```bash
 python <имя_файла>.py
+
+## License
+
+MIT License
