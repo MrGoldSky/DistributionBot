@@ -6,19 +6,20 @@ from telebot import types
 
 import sqlite3
 
-from config import BOT_TOKEN, BASE_PATH, LAST_RUN_FILE
+from config import BOT_TOKEN, BASE_PATH, LAST_RUN_FILE, OWNER
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
 printy = bot.send_message
 
 
-# Старт обработчик
 @bot.message_handler(commands=["start"])
 def start(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     registration = types.KeyboardButton("Регистрация")
-    markup.add(registration)
+    already_reg = types.KeyboardButton("Я уже зарегистрирован")
+    
+    markup.add(registration, already_reg)
     printy(message.chat.id, f"Привет {message.from_user.first_name}!", reply_markup=markup)
 
 def get_last_run_time():
@@ -173,7 +174,7 @@ def check_text_message(message):
         return
 
     if message.text == "Информация о боте":
-        printy(message.chat.id, "Бот для записи группы М3104 на сдачу лаб")
+        printy(message.chat.id, "Бот для записи на сдачу лаб")
         printy(message.chat.id, "Создатель бота: https://t.me/Mr_GoldSky")
     elif message.text == "Назад":
         return interface(message)
@@ -183,10 +184,13 @@ def check_text_message(message):
         return entry(message)
     elif message.text == "Посмотреть список":
         return see_entries(message)
-    elif message.text == "Очистить записи" and message.chat.id == 788207542:
+    elif message.text == "Очистить записи" and message.chat.id == int(OWNER):
         return clear_entries(message)
     elif message.text == "Удалить свою запись":
         return clear_entrie(message)
+    elif message.text == "Я уже зарегистрирован":
+        return interface(message)
+
 
 
 def startBot():
